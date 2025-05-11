@@ -14,6 +14,11 @@ public class Noclip : BasePlugin
     public override string ModuleDescription => "";
     private readonly List<ulong> _noClipPlayers = [];
 
+    public override void Unload(bool hotReload)
+    {
+        _noClipPlayers.Clear();
+    }
+
     [ConsoleCommand("css_noclip", "noclip command")]
     [RequiresPermissions("@css/cheats")]
     public void OnCmdNoclip(CCSPlayerController? player, CommandInfo command)
