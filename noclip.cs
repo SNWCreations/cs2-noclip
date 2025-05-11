@@ -12,6 +12,7 @@ public class Noclip : BasePlugin
     public override string ModuleVersion => "1.0.0+upstream.1.0.2";
     public override string ModuleAuthor => "exkludera, SNWCreations";
     public override string ModuleDescription => "";
+    private readonly List<ulong> _noClipPlayers = [];
 
     [ConsoleCommand("css_noclip", "noclip command")]
     [RequiresPermissions("@css/cheats")]
@@ -25,18 +26,61 @@ public class Noclip : BasePlugin
         {
             return;
         }
+        SwitchNoClip(playerPawn);
+    }
+    
+    private void SwitchNoClip(CCSPlayerPawn playerPawn)
+    {
+        var playerId = playerPawn.OriginalController.Get()?.SteamID;
         if (playerPawn.MoveType == MoveType_t.MOVETYPE_NOCLIP)
         {
-            playerPawn.MoveType = MoveType_t.MOVETYPE_WALK;
-            Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 2); // walk
-            Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
+            SetNormalWalk(playerPawn);
+            if (playerId.HasValue)
+            {
+                _noClipPlayers.Remove(playerId.Value);
+            }
         }
         else
         {
-            playerPawn.MoveType = MoveType_t.MOVETYPE_NOCLIP;
-            Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 8); // noclip
-            Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
+            SetNoClip(playerPawn);
+            if (playerId.HasValue)
+            {
+                _noClipPlayers.Add(playerId.Value);
+            }
         }
     }
-    
+
+    private void SetNormalWalk(CCSPlayerPawn? playerPawn)
+    {
+        if (playerPawn == null)
+        {
+            return;
+        }
+        playerPawn.MoveType = MoveType_t.MOVETYPE_WALK;
+        Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 2); // walk
+        Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
+    }
+
+    private void SetNoClip(CCSPlayerPawn? playerPawn)
+    {
+        if (playerPawn == null)
+        {
+            return;
+        }
+        playerPawn.MoveType = MoveType_t.MOVETYPE_NOCLIP;
+        Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 8); // noclip
+        Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
+    }
+
+    [GameEventHandler]
+    public void OnRoundStart(EventRoundStart @event, GameEventInfo info)
+    {
+        foreach (var player in Utilities.GetPlayers())
+        {
+            if (_noClipPlayers.Contains(player.SteamID))
+            {
+                SetNoClip(player.Pawn.Value?.As<CCSPlayerPawn>());
+            }
+        }
+    }
 }
