@@ -1,6 +1,7 @@
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Core.Attributes.Registration;
+using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
@@ -13,6 +14,7 @@ public class Noclip : BasePlugin
     public override string ModuleDescription => "";
 
     [ConsoleCommand("css_noclip", "noclip command")]
+    [RequiresPermissions("@css/cheats")]
     public void OnCmdNoclip(CCSPlayerController? player, CommandInfo command)
     {
         if (player == null || !player.PawnIsAlive || player.Team == CsTeam.Spectator || player.Team == CsTeam.None)
