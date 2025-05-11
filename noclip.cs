@@ -80,12 +80,9 @@ public class Noclip : BasePlugin
     [GameEventHandler]
     public void OnRoundStart(EventRoundStart @event, GameEventInfo info)
     {
-        foreach (var player in Utilities.GetPlayers())
+        foreach (var player in Utilities.GetPlayers().Where(player => _noClipPlayers.Contains(player.SteamID)))
         {
-            if (_noClipPlayers.Contains(player.SteamID))
-            {
-                SetNoClip(player.Pawn.Value?.As<CCSPlayerPawn>());
-            }
+            SetNoClip(player.Pawn.Value?.As<CCSPlayerPawn>());
         }
     }
 }
