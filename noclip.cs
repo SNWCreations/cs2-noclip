@@ -18,17 +18,22 @@ public class Noclip : BasePlugin
         if (player == null || !player.PawnIsAlive || player.Team == CsTeam.Spectator || player.Team == CsTeam.None)
             return;
 
-        if (player.PlayerPawn.Value.MoveType == MoveType_t.MOVETYPE_NOCLIP)
+        CCSPlayerPawn? playerPawn = player.PlayerPawn.Value;
+        if (playerPawn == null)
         {
-            player.PlayerPawn.Value.MoveType = MoveType_t.MOVETYPE_WALK;
-            Schema.SetSchemaValue(player.PlayerPawn.Value.Handle, "CBaseEntity", "m_nActualMoveType", 2); // walk
-            Utilities.SetStateChanged(player.PlayerPawn.Value, "CBaseEntity", "m_MoveType");
+            return;
+        }
+        if (playerPawn.MoveType == MoveType_t.MOVETYPE_NOCLIP)
+        {
+            playerPawn.MoveType = MoveType_t.MOVETYPE_WALK;
+            Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 2); // walk
+            Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
         }
         else
         {
-            player.PlayerPawn.Value.MoveType = MoveType_t.MOVETYPE_NOCLIP;
-            Schema.SetSchemaValue(player.PlayerPawn.Value.Handle, "CBaseEntity", "m_nActualMoveType", 8); // noclip
-            Utilities.SetStateChanged(player.PlayerPawn.Value, "CBaseEntity", "m_MoveType");
+            playerPawn.MoveType = MoveType_t.MOVETYPE_NOCLIP;
+            Schema.SetSchemaValue(playerPawn.Handle, "CBaseEntity", "m_nActualMoveType", 8); // noclip
+            Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
         }
     }
     
