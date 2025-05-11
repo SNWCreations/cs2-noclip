@@ -8,8 +8,8 @@ using CounterStrikeSharp.API.Modules.Utils;
 public class Noclip : BasePlugin
 {
     public override string ModuleName => "noclip";
-    public override string ModuleVersion => "1.0.2";
-    public override string ModuleAuthor => "exkludera";
+    public override string ModuleVersion => "1.0.0+upstream.1.0.2";
+    public override string ModuleAuthor => "exkludera, SNWCreations";
     public override string ModuleDescription => "";
 
     [ConsoleCommand("css_noclip", "noclip command")]
