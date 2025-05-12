@@ -66,7 +66,7 @@ public class Noclip : BasePlugin
         Utilities.SetStateChanged(playerPawn, "CBaseEntity", "m_MoveType");
     }
 
-    private void SetNoClip(CCSPlayerPawn? playerPawn)
+    private void SetNoClip(CBasePlayerPawn? playerPawn)
     {
         if (playerPawn == null)
         {
@@ -83,6 +83,19 @@ public class Noclip : BasePlugin
         foreach (var player in Utilities.GetPlayers().Where(player => _noClipPlayers.Contains(player.SteamID)))
         {
             SetNoClip(player.Pawn.Value?.As<CCSPlayerPawn>());
+        }
+
+        return HookResult.Continue;
+    }
+
+    [GameEventHandler]
+    public HookResult OnBotTakeOver(EventBotTakeover @event, GameEventInfo info)
+    {
+        var controller = @event.Userid;
+        var bot = @event.Botid;
+        if (controller != null && _noClipPlayers.Contains(controller.SteamID))
+        {
+            SetNoClip(bot?.Pawn.Value);
         }
 
         return HookResult.Continue;
