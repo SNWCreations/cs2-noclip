@@ -26,7 +26,7 @@ public class Noclip : BasePlugin
         if (player == null || player.Team == CsTeam.Spectator || player.Team == CsTeam.None)
             return;
 
-        CBasePlayerPawn? playerPawn = FindActualPawn(player);
+        CBasePlayerPawn? playerPawn = player.Pawn.Get();
         if (playerPawn == null)
         {
             return;
@@ -99,37 +99,5 @@ public class Noclip : BasePlugin
         }
 
         return HookResult.Continue;
-    }
-
-    /**
-     * Find the player pawn which is actually controlled by the given player.
-     * This will consider bots which are controlled by players.
-     */
-    public static CCSPlayerPawn? FindActualPawn(CCSPlayerController player)
-    {
-        foreach (var pController in Utilities.GetPlayers())
-        {
-            var pawnPtr = pController.PlayerPawn;
-            if (pawnPtr.IsValid)
-            {
-                var pawn = pawnPtr.Value;
-                if (pawn != null)
-                {
-                    var controllerPtr = pawn.Controller;
-                    if (controllerPtr.IsValid)
-                    {
-                        var controller = controllerPtr.Value;
-                        if (controller != null)
-                        {
-                            if (player.SteamID == controller.SteamID)
-                            {
-                                return pawn;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null;
     }
 }
